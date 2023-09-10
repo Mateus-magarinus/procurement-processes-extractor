@@ -1,0 +1,40 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model ProcurementProcess {
+  id                   String   @id @default(auto()) @map("_id") @db.ObjectId
+  codigoLicitacao      Int
+  identificacao        String
+  numero               String
+  resumo               String
+  codigoSituacaoEdital Int
+  status               Json
+  dataHoraInicioLances DateTime
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  LicitationItems LicitationItem[]
+}
+
+model LicitationItem {
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  quantidade      Float
+  valorReferencia Float
+  descricao       String
+  participacao    Json
+  codigo          Int
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  licitationProcessId String             @db.ObjectId
+  process             ProcurementProcess @relation(fields: [licitationProcessId], references: [id])
+}
